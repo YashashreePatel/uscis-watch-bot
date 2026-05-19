@@ -98,6 +98,17 @@ class Settings:
     sources: tuple[SourceConfig, ...]
 
 
+def _get_env(name: str) -> str | None:
+    """Return a stripped environment variable or None when blank."""
+
+    value = os.getenv(name)
+    if value is None:
+        return None
+
+    stripped = value.strip()
+    return stripped or None
+
+
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
     """Load environment variables once for the current process."""
@@ -109,8 +120,8 @@ def get_settings() -> Settings:
     user_agent = os.getenv("USER_AGENT", DEFAULT_USER_AGENT)
 
     return Settings(
-        telegram_bot_token=os.getenv("TELEGRAM_BOT_TOKEN"),
-        telegram_chat_id=os.getenv("TELEGRAM_CHAT_ID"),
+        telegram_bot_token=_get_env("TELEGRAM_BOT_TOKEN"),
+        telegram_chat_id=_get_env("TELEGRAM_CHAT_ID"),
         database_path=database_path,
         request_timeout=request_timeout,
         user_agent=user_agent,
